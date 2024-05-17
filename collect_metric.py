@@ -46,14 +46,12 @@ def check_pr_labels(pr):
 def check_ci_status(pr):
     pr_commits = pr.get_commits()
     latest_commit = pr_commits.reversed[0]
-    status = latest_commit.get_combined_status()
 
-    if status.state == 'success':
-        return 'success'
-    elif status.state == 'failure':
-        return 'failure'
-    else:
-        return 'pending'
+    for check in latest_commit.get_check_runs():
+        print(check.conclusion)
+        if check.conclusion == 'failure':
+            return False
+    return True
 
 def collect_pr_metrics(repo):
     pr_data = []
@@ -107,4 +105,4 @@ def collect_pr_metrics(repo):
     return pr_df
 
 pr_dfs = collect_pr_metrics(repo)
-pr_dfs.to_csv('pr_metrics.csv', index=False)
+pr_dfs.to_csv('pr_metrics1.csv', index=False)
